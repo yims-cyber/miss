@@ -1,7 +1,29 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Menu, X, Crown, Award } from "lucide-react";
+import { Menu, X, Crown, Award, Home, Info, UserCheck, Users, Heart, Sparkles, Mail } from "lucide-react";
 import { NAVIGATION_LINKS } from "../data";
+
+const getLinkIcon = (label: string) => {
+  switch (label.toLowerCase()) {
+    case "accueil":
+      return <Home className="w-3.5 h-3.5 shrink-0" />;
+    case "à propos":
+      return <Info className="w-3.5 h-3.5 shrink-0" />;
+    case "casting":
+      return <UserCheck className="w-3.5 h-3.5 shrink-0" />;
+    case "candidates":
+      return <Users className="w-3.5 h-3.5 shrink-0" />;
+    case "vote":
+      return <Heart className="w-3.5 h-3.5 shrink-0" />;
+    case "partenaires":
+      return <Sparkles className="w-3.5 h-3.5 shrink-0" />;
+    case "contact":
+      return <Mail className="w-3.5 h-3.5 shrink-0" />;
+    default:
+      return <Crown className="w-3.5 h-3.5 shrink-0" />;
+  }
+};
+
 
 interface HeaderProps {
   onOpenRegister: () => void;
@@ -52,44 +74,42 @@ export default function Header({ onOpenRegister }: HeaderProps) {
         initial={{ y: -50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
-        className={`fixed top-4 left-4 right-4 z-50 mx-auto max-w-7xl transition-all duration-300 ${
+        className={`fixed top-2 sm:top-3 md:top-4 left-4 right-4 z-50 mx-auto max-w-7xl transition-all duration-300 ${
           isScrolled 
-            ? "bg-brand-bg/80 backdrop-blur-md border border-brand-outline/20 shadow-lg rounded-2xl py-3 px-6" 
-            : "bg-brand-surface/35 backdrop-blur-sm border border-brand-outline/10 rounded-2xl py-4 px-6"
+            ? "bg-brand-bg/80 backdrop-blur-md border border-brand-outline/20 shadow-lg rounded-2xl py-1.5 px-6" 
+            : "bg-brand-surface/35 backdrop-blur-sm border border-brand-outline/10 rounded-2xl py-2 sm:py-2.5 px-6"
         }`}
       >
         <div className="flex items-center justify-between">
-          {/* Logo with gold accent */}
+          {/* Logo with official image only */}
           <a 
             href="#accueil" 
             onClick={(e) => handleLinkClick(e, "#accueil")}
-            className="flex items-center gap-2 group cursor-pointer"
+            className="flex items-center group cursor-pointer"
           >
-            <Crown className="w-6 h-6 text-brand-gold transition-transform duration-300 group-hover:rotate-12" />
-            <div className="flex flex-col">
-              <span className="font-display font-bold text-base tracking-wider text-brand-ivory group-hover:text-brand-gold transition-colors">
-                MISS NATIONALE
-              </span>
-              <span className="font-mono text-[9px] text-brand-gold tracking-widest font-bold -mt-1">
-                DRC 2026
-              </span>
-            </div>
+            <img 
+              src="https://missnationalerdc.approtech.org/admin/logo.png" 
+              alt="Logo Miss Nationale" 
+              referrerPolicy="no-referrer"
+              className="h-11 sm:h-13 md:h-14 lg:h-15 xl:h-16 w-auto object-contain transition-all duration-300 group-hover:scale-105 filter drop-shadow-[0_0_15px_rgba(242,195,91,0.25)]"
+            />
           </a>
 
           {/* Desktop Navigation Links */}
-          <nav className="hidden md:flex items-center gap-1">
+          <nav className="hidden lg:flex items-center gap-1">
             {NAVIGATION_LINKS.map((link) => (
               <a
                 key={link.href}
                 href={link.href}
                 onClick={(e) => handleLinkClick(e, link.href)}
-                className={`px-3 py-1.5 text-xs font-semibold tracking-wider transition-all duration-300 rounded-md relative ${
+                className={`px-3 py-1.5 text-xs font-semibold tracking-wider transition-all duration-300 rounded-md relative flex items-center gap-1.5 ${
                   activeHash === link.href
                     ? "text-brand-gold font-bold"
                     : "text-brand-outline hover:text-brand-ivory"
                 }`}
               >
-                {link.label}
+                {getLinkIcon(link.label)}
+                <span>{link.label}</span>
                 {activeHash === link.href && (
                   <motion.span
                     layoutId="activeIndicator"
@@ -102,7 +122,7 @@ export default function Header({ onOpenRegister }: HeaderProps) {
           </nav>
 
           {/* CTA Inscription */}
-          <div className="hidden md:block">
+          <div className="hidden lg:block">
             <button
               id="cta-nav-register"
               onClick={onOpenRegister}
@@ -117,10 +137,10 @@ export default function Header({ onOpenRegister }: HeaderProps) {
           <button
             id="mobile-menu-toggle"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-1.5 text-brand-outline hover:text-brand-ivory transition-colors"
+            className="lg:hidden p-1.5 text-brand-outline hover:text-brand-ivory transition-colors"
             aria-label="Toggle menu"
           >
-            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
         </div>
       </motion.header>
@@ -134,7 +154,7 @@ export default function Header({ onOpenRegister }: HeaderProps) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.25 }}
-            className="fixed top-20 left-4 right-4 z-40 md:hidden bg-brand-surface/95 backdrop-blur-xl border border-brand-outline/20 rounded-2xl p-6 shadow-2xl flex flex-col gap-5"
+            className="fixed top-[66px] sm:top-[78px] md:top-[86px] left-4 right-4 z-40 lg:hidden bg-brand-surface/95 backdrop-blur-xl border border-brand-outline/20 rounded-2xl p-6 shadow-2xl flex flex-col gap-5 items-stretch"
           >
             <div className="flex flex-col gap-3">
               {NAVIGATION_LINKS.map((link) => (
@@ -142,13 +162,14 @@ export default function Header({ onOpenRegister }: HeaderProps) {
                   key={link.href}
                   href={link.href}
                   onClick={(e) => handleLinkClick(e, link.href)}
-                  className={`text-sm py-2 px-3 rounded-lg font-medium transition-colors ${
+                  className={`text-sm py-2 px-3 rounded-lg font-medium transition-colors flex items-center gap-2.5 ${
                     activeHash === link.href
                       ? "bg-brand-gold/10 text-brand-gold font-bold"
                       : "text-brand-outline hover:text-brand-ivory hover:bg-brand-charcoal/30"
                   }`}
                 >
-                  {link.label}
+                  {getLinkIcon(link.label)}
+                  <span>{link.label}</span>
                 </a>
               ))}
             </div>

@@ -108,16 +108,13 @@ export default function Footer() {
         
         {/* Logo and Branding summary Column (4/12 width) */}
         <div className="md:col-span-4 flex flex-col items-start text-left gap-4">
-          <div className="flex items-center gap-2">
-            <Crown className="w-6 h-6 text-brand-gold" />
-            <div className="flex flex-col">
-              <span className="font-display font-bold text-base tracking-wider text-brand-ivory">
-                MISS NATIONALE
-              </span>
-              <span className="font-mono text-[9px] text-brand-gold tracking-widest font-bold -mt-1">
-                DRC 2026
-              </span>
-            </div>
+          <div className="flex items-center">
+            <img 
+              src="https://missnationalerdc.approtech.org/admin/logo.png" 
+              alt="Logo Miss Nationale" 
+              referrerPolicy="no-referrer"
+              className="h-16 sm:h-20 lg:h-24 w-auto object-contain filter drop-shadow-[0_0_15px_rgba(242,195,91,0.25)]"
+            />
           </div>
           <p className="font-sans text-brand-outline text-xs leading-relaxed mt-2 max-w-xs">
             La plus haute distinction nationale de la beauté, de l'intelligence et du leadership féminin en République Démocratique du Congo.
