@@ -1,0 +1,81 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-brand-bg: #0a0806;
+  --color-brand-surface: #151311;
+  --color-brand-surface-bright: #3b3937;
+  --color-brand-gold: #f2c35b;
+  --color-brand-gold-dark: #d4a843;
+  --color-brand-ivory: #f9f6f0;
+  --color-brand-charcoal: #2a2826;
+  --color-brand-outline: #9a8f7d;
+
+  --font-sans: "Plus Jakarta Sans", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Playfair Display", Georgia, serif;
+}
+
+/* Custom visual utilities for Miss Nationale DRC 2026 */
+.glass-panel {
+  background: rgba(21, 19, 17, 0.45);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(212, 168, 67, 0.15);
+}
+
+.glass-panel-hover {
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-panel-hover:hover {
+  background: rgba(212, 168, 67, 0.05);
+  border-color: rgba(212, 168, 67, 0.35);
+  box-shadow: 0 15px 35px rgba(212, 168, 67, 0.08);
+  transform: translateY(-2px);
+}
+
+.gold-gradient-bg {
+  background: linear-gradient(135deg, #f2c35b 0%, #d4a843 50%, #9e7820 100%);
+}
+
+.gold-text-gradient {
+  background: linear-gradient(135deg, #fff 0%, #f2c35b 50%, #d4a843 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.shine-border {
+  border-image: linear-gradient(to right, rgba(212, 168, 67, 0.3), rgba(21, 19, 17, 0.1) 80%) 1;
+}
+
+/* Scrollbar customization */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #0a0806;
+}
+::-webkit-scrollbar-thumb {
+  background: #2a2826;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #d4a843;
+}
+
+/* Pulse animation for active calendar event timeline badge */
+@keyframes timeline-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(242, 195, 91, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 12px rgba(242, 195, 91, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(242, 195, 91, 0);
+  }
+}
+
+.pulse-glowing-orb {
+  animation: timeline-pulse 2s infinite;
+}

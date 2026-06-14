@@ -1,0 +1,6 @@
+{
+  "name": "Miss Nationale DRC 2026",
+  "description": "La landing page officielle de Miss Nationale République Démocratique du Congo 2026.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
