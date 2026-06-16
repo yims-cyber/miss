@@ -10,8 +10,7 @@ export const HERO_ASSETS = {
 
 export const NAVIGATION_LINKS = [
   { label: "Accueil", href: "#accueil" },
-  { label: "À propos", href: "#apropos" },
-  { label: "Casting", href: "#casting" },
+  { label: "Concours", href: "#concours" },
   { label: "Candidates", href: "#candidates" },
   { label: "Vote", href: "#vote" },
   { label: "Partenaires", href: "#partenaires" },

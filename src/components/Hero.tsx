@@ -10,13 +10,6 @@ interface HeroProps {
 export default function Hero({ onOpenRegister }: HeroProps) {
   const CAROUSEL_SLIDES = [
     {
-      image: HERO_ASSETS.heroImage,
-      name: "Ambassadrice Nationale",
-      province: "RDC",
-      glowColor: "rgba(242, 195, 91, 0.3)",
-      plateBg: "radial-gradient(circle, rgba(255,255,255,0.18) 0%, rgba(242,195,91,0.06) 60%, rgba(9,9,11,0.95) 100%)"
-    },
-    {
       image: "/src/assets/images/candidate_daniella_1781411235051.jpg",
       name: "Daniella M.",
       province: "KINSHASA",
@@ -36,10 +29,32 @@ export default function Hero({ onOpenRegister }: HeroProps) {
       province: "LUBUMBASHI",
       glowColor: "rgba(214, 168, 67, 0.32)",
       plateBg: "radial-gradient(circle, rgba(255,255,255,0.2) 0%, rgba(214,168,67,0.06) 60%, rgba(9,9,11,0.95) 100%)"
+    },
+    {
+      image: "/src/assets/images/candidate_daniella_1781411235051.jpg",
+      name: "Juanna G.",
+      province: "KINSHASA",
+      glowColor: "rgba(255, 255, 255, 0.32)",
+      plateBg: "radial-gradient(circle, rgba(255,255,255,0.22) 0%, rgba(255,195,91,0.05) 60%, rgba(9,9,11,0.95) 100%)"
+    },
+    {
+      image: "/src/assets/images/candidate_djenny_1781411252428.jpg",
+      name: "Barusa E.",
+      province: "KINSHASA",
+      glowColor: "rgba(242, 195, 91, 0.26)",
+      plateBg: "radial-gradient(circle, rgba(255,255,255,0.18) 0%, rgba(242,195,91,0.05) 60%, rgba(9,9,11,0.95) 100%)"
+    },
+    {
+      image: "/src/assets/images/candidate_danena_1781411268128.jpg",
+      name: "Nana A.",
+      province: "KINSHASA",
+      glowColor: "rgba(214, 168, 67, 0.28)",
+      plateBg: "radial-gradient(circle, rgba(255,255,255,0.2) 0%, rgba(214,168,67,0.05) 60%, rgba(9,9,11,0.95) 100%)"
     }
   ];
 
   const [activeSlide, setActiveSlide] = React.useState(0);
+  const [dragStartX, setDragStartX] = React.useState<number | null>(null);
 
   React.useEffect(() => {
     const timer = setInterval(() => {
@@ -47,6 +62,44 @@ export default function Hero({ onOpenRegister }: HeroProps) {
     }, 6000);
     return () => clearInterval(timer);
   }, []);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setDragStartX(e.touches[0].clientX);
+  };
+  
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (dragStartX === null) return;
+    const diffX = e.touches[0].clientX - dragStartX;
+    if (Math.abs(diffX) > 65) {
+      if (diffX > 0) {
+        setActiveSlide((prev) => (prev - 1 + CAROUSEL_SLIDES.length) % CAROUSEL_SLIDES.length);
+      } else {
+        setActiveSlide((prev) => (prev + 1) % CAROUSEL_SLIDES.length);
+      }
+      setDragStartX(null);
+    }
+  };
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    setDragStartX(e.clientX);
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (dragStartX === null) return;
+    const diffX = e.clientX - dragStartX;
+    if (Math.abs(diffX) > 65) {
+      if (diffX > 0) {
+        setActiveSlide((prev) => (prev - 1 + CAROUSEL_SLIDES.length) % CAROUSEL_SLIDES.length);
+      } else {
+        setActiveSlide((prev) => (prev + 1) % CAROUSEL_SLIDES.length);
+      }
+      setDragStartX(null);
+    }
+  };
+
+  const handleMouseUp = () => {
+    setDragStartX(null);
+  };
 
   const scrollToAbout = () => {
     const target = document.getElementById("apropos");
@@ -142,7 +195,7 @@ export default function Hero({ onOpenRegister }: HeroProps) {
       {/* Hero content container */}
       <div className="relative z-10 max-w-7xl mx-auto w-full grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-4 lg:gap-8 xl:gap-12 items-center">
         {/* Left Side: Editorial Typography & Copy */}
-        <div className="md:col-span-7 flex flex-col items-center md:items-start gap-3.5 md:gap-4 lg:gap-3 xl:gap-4 text-center md:text-left order-2 md:order-1 transform md:-translate-y-6 lg:translate-y-0">
+        <div className="md:col-span-6 flex flex-col items-center md:items-start gap-3.5 md:gap-4 lg:gap-3 xl:gap-4 text-center md:text-left order-2 md:order-1 transform md:-translate-y-6 lg:translate-y-0">
           <motion.div
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
@@ -206,90 +259,132 @@ export default function Hero({ onOpenRegister }: HeroProps) {
           </motion.div>
         </div>
 
-        {/* Right Side: Luxury Auto-Playing Standing Carousel styled with Golden Corner Accents & Dynamic Light Bleed */}
-        <div className="hidden md:flex md:col-span-5 lg:col-span-5 justify-center md:justify-end lg:justify-end items-center order-1 md:order-2 mb-0 transform md:translate-y-6 lg:translate-y-6 xl:translate-y-10 xl:pr-6 relative z-10 w-full">
-          <div className="relative select-none flex items-center justify-center">
+        {/* Right Side: 3D Swap/Slide Carousel (Desktop & Tablet only) */}
+        <div 
+          className="hidden md:flex md:col-span-6 lg:col-span-6 justify-center items-center order-1 md:order-2 mt-4 relative z-20 w-full min-h-[460px]"
+          style={{ perspective: 1400 }}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseUp}
+        >
+          <div className="relative w-full h-[410px] lg:h-[450px] flex items-center justify-center select-none">
             
             {/* Ambient sliding back-light halo ("qui fait changer le fond lumineux") */}
             <motion.div
               key={`halo-${activeSlide}`}
-              initial={{ opacity: 0, scale: 0.85 }}
+              initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 1.6, ease: [0.25, 1, 0.5, 1] }}
-              className="absolute -inset-16 lg:-inset-24 rounded-full blur-[80px] lg:blur-[110px] pointer-events-none transition-all duration-1000 mix-blend-screen"
+              transition={{ duration: 1.5, ease: [0.25, 1, 0.5, 1] }}
+              className="absolute w-[290px] h-[290px] rounded-full blur-[90px] pointer-events-none mix-blend-screen -translate-y-4"
               style={{
                 background: CAROUSEL_SLIDES[activeSlide].plateBg,
               }}
             />
 
             {/* Orbiting Golden Particle Rings */}
-            <div className="absolute -inset-6 rounded-full border border-dashed border-brand-gold/15 animate-[spin_55s_linear_infinite] pointer-events-none" />
-            <div className="absolute -inset-12 rounded-full border border-brand-gold/5 animate-[spin_75s_linear_infinite] pointer-events-none" />
+            <div className="absolute w-[250px] h-[340px] lg:w-[290px] lg:h-[390px] rounded-full border border-dashed border-brand-gold/10 animate-[spin_55s_linear_infinite] pointer-events-none -translate-y-4" />
 
-            {/* Main Elegant Standing Portrait Frame with custom corner decorations */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.92 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.8 }}
-              className="relative w-[280px] h-[370px] sm:w-[320px] sm:h-[420px] md:w-[310px] md:h-[420px] lg:w-[320px] lg:h-[430px] xl:w-[360px] xl:h-[490px] rounded-[1.8rem] border border-brand-gold/25 bg-brand-surface/20 shadow-[0_20px_50px_rgba(0,0,0,0.6)] backdrop-blur-sm overflow-hidden flex items-center justify-center p-3"
-            >
-              {/* Dynamic Inner Background Plate - "fond lumineux" changing */}
-              <motion.div
-                key={`internal-plate-${activeSlide}`}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 1.4, ease: [0.25, 1, 0.5, 1] }}
-                className="absolute inset-0 pointer-events-none z-0"
-                style={{
-                  background: CAROUSEL_SLIDES[activeSlide].plateBg,
-                }}
-              />
+            {/* 3D Stacking Loop of Candidates */}
+            {CAROUSEL_SLIDES.map((slide, i) => {
+              let offset = i - activeSlide;
+              const len = CAROUSEL_SLIDES.length;
+              if (offset < -len / 2) offset += len;
+              if (offset > len / 2) offset -= len;
 
-              {/* Glowing Golden Ring frame around the image */}
-              <div className="absolute inset-2.5 rounded-[1.4rem] border border-brand-gold/30 pointer-events-none z-20" />
+              const isActive = i === activeSlide;
+              const absOffset = Math.abs(offset);
 
-              {/* Beautiful Gold Corner Ornaments - "au coins bien affiché" */}
-              <div className="absolute top-4 left-4 w-5 h-5 border-t-2 border-l-2 border-brand-gold/50 z-30 pointer-events-none" />
-              <div className="absolute top-4 right-4 w-5 h-5 border-t-2 border-r-2 border-brand-gold/50 z-30 pointer-events-none" />
-              <div className="absolute bottom-4 left-4 w-5 h-5 border-b-2 border-l-2 border-brand-gold/50 z-30 pointer-events-none" />
-              <div className="absolute bottom-4 right-4 w-5 h-5 border-b-2 border-r-2 border-brand-gold/50 z-30 pointer-events-none" />
+              // Hide far away cards to keep layout beautiful
+              if (absOffset > 2) return null;
 
-              {/* Standing Miss Image Crop inside the vertical luxury frame */}
-              <div className="relative w-full h-full rounded-[1.4rem] overflow-hidden z-10 bg-black/40 group">
-                <motion.img
-                  key={activeSlide}
-                  src={CAROUSEL_SLIDES[activeSlide].image}
-                  alt={CAROUSEL_SLIDES[activeSlide].name}
-                  initial={{ opacity: 0, scale: 1.12, filter: "blur(6px)" }}
-                  animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 1.6, ease: [0.25, 1, 0.5, 1] }}
-                  referrerPolicy="no-referrer"
-                  className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
-                />
-                
-                {/* Subtle dark gradient overlay at top and bottom of photo */}
-                <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-brand-bg/90 via-brand-bg/30 to-transparent z-10 pointer-events-none" />
-                <div className="absolute inset-x-0 top-0 h-1/4 bg-gradient-to-b from-brand-bg/60 to-transparent z-10 pointer-events-none" />
-              </div>
+              // Compute precise 3D math transformations on standard cylindrical path
+              const xTranslate = offset * 130; 
+              const zTranslate = -absOffset * 140; 
+              const rotateY = offset * -25; 
+              const scale = isActive ? 1.05 : 1 - absOffset * 0.14;
+              const opacity = 1 - absOffset * 0.45;
+              const zIndex = 15 - absOffset;
 
-              {/* Active candidate quick metadata info card */}
-              <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-30 flex flex-col items-center py-1.5 px-4 rounded-full bg-brand-bg/80 border border-brand-gold/20 backdrop-blur-md shadow-lg w-[82%] text-center pointer-events-none">
-                <span className="font-mono text-[9px] font-bold tracking-[0.2em] text-brand-gold uppercase">
-                  {CAROUSEL_SLIDES[activeSlide].province}
-                </span>
-                <span className="font-display text-[11px] font-semibold text-brand-ivory mt-0.5 whitespace-nowrap">
-                  {CAROUSEL_SLIDES[activeSlide].name}
-                </span>
-              </div>
-            </motion.div>
+              return (
+                <motion.div
+                  key={i}
+                  style={{
+                    transformStyle: "preserve-3d",
+                  }}
+                  animate={{
+                    x: xTranslate,
+                    z: zTranslate,
+                    rotateY: rotateY,
+                    scale: scale,
+                    opacity: opacity,
+                    zIndex: zIndex,
+                  }}
+                  transition={{
+                    type: "spring",
+                    stiffness: 140,
+                    damping: 18,
+                  }}
+                  onClick={() => setActiveSlide(i)}
+                  className={`absolute w-[220px] h-[310px] lg:w-[260px] lg:h-[360px] xl:w-[280px] xl:h-[390px] rounded-[1.6rem] border ${
+                    isActive 
+                      ? "border-brand-gold/50 shadow-[0_22px_45px_rgba(242,195,91,0.22)]" 
+                      : "border-brand-outline/15 shadow-[0_15px_30px_rgba(0,0,0,0.55)] hover:border-brand-gold/35"
+                  } bg-brand-surface/25 backdrop-blur-md overflow-hidden p-2.5 flex flex-col items-center justify-center transition-colors duration-300 cursor-pointer`}
+                >
+                  {/* Internal Glow Plate */}
+                  <div
+                    className="absolute inset-0 pointer-events-none z-0 opacity-70"
+                    style={{
+                      background: slide.plateBg,
+                    }}
+                  />
 
-            {/* Carousel navigation controls */}
-            <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 z-30 flex items-center justify-center gap-3">
+                  {/* Inner golden ring frame around image */}
+                  <div className={`absolute inset-2 rounded-[1.3rem] border ${isActive ? "border-brand-gold/25" : "border-transparent"} pointer-events-none z-20`} />
+
+                  {/* Golden Corner Ornaments */}
+                  <div className="absolute top-3.5 left-3.5 w-3.5 h-3.5 border-t border-l border-brand-gold/40 z-30 pointer-events-none" />
+                  <div className="absolute top-3.5 right-3.5 w-3.5 h-3.5 border-t border-r border-brand-gold/40 z-30 pointer-events-none" />
+                  <div className="absolute bottom-3.5 left-3.5 w-3.5 h-3.5 border-b border-l border-brand-gold/40 z-30 pointer-events-none" />
+                  <div className="absolute bottom-3.5 right-3.5 w-3.5 h-3.5 border-b border-r border-brand-gold/40 z-30 pointer-events-none" />
+
+                  {/* Portrait Miss Crop */}
+                  <div className="relative w-full h-full rounded-[1.2rem] overflow-hidden z-10 bg-black/45">
+                    <img
+                      src={slide.image}
+                      alt={slide.name}
+                      referrerPolicy="no-referrer"
+                      className="w-full h-full object-cover object-top transition-transform duration-700 hover:scale-105 select-none pointer-events-none"
+                    />
+                    <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-brand-bg/95 via-brand-bg/40 to-transparent z-10 pointer-events-none" />
+                    <div className="absolute inset-x-0 top-0 h-1/4 bg-gradient-to-b from-brand-bg/40 to-transparent z-10 pointer-events-none" />
+                  </div>
+
+                  {/* Info Tag overlay on slide */}
+                  <div className="absolute bottom-5 left-1/2 -translate-x-1/2 z-30 flex flex-col items-center py-1.5 px-3 rounded-full bg-brand-bg/90 border border-brand-gold/15 backdrop-blur-md shadow-md w-[84%] text-center pointer-events-none">
+                    <span className="font-mono text-[8px] tracking-[0.2em] text-brand-gold font-bold uppercase">
+                      {slide.province}
+                    </span>
+                    <span className="font-display text-[10px] font-bold text-brand-ivory mt-0.5 whitespace-nowrap">
+                      {slide.name}
+                    </span>
+                  </div>
+                </motion.div>
+              );
+            })}
+
+            {/* Bottom Slider Navigation controls */}
+            <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 z-30 flex items-center justify-center gap-3">
               <button
-                onClick={() => setActiveSlide((prev) => (prev - 1 + CAROUSEL_SLIDES.length) % CAROUSEL_SLIDES.length)}
-                className="w-8 h-8 rounded-full border border-brand-outline/20 bg-brand-surface/40 hover:bg-brand-gold/15 hover:border-brand-gold/40 text-brand-gold transition-all flex items-center justify-center text-xs font-bold cursor-pointer"
-                aria-label="Previous miss"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setActiveSlide((prev) => (prev - 1 + CAROUSEL_SLIDES.length) % CAROUSEL_SLIDES.length);
+                }}
+                className="w-7 h-7 rounded-full border border-brand-outline/25 bg-[#0e0d14]/80 hover:bg-brand-gold/20 hover:border-brand-gold/50 text-brand-gold transition-all flex items-center justify-center text-sm font-bold cursor-pointer"
+                aria-label="Previous slide"
               >
                 ‹
               </button>
@@ -298,9 +393,12 @@ export default function Hero({ onOpenRegister }: HeroProps) {
                 {CAROUSEL_SLIDES.map((_, i) => (
                   <button
                     key={i}
-                    onClick={() => setActiveSlide(i)}
-                    className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
-                      activeSlide === i ? "w-6 bg-brand-gold" : "w-1.5 bg-brand-outline/40 hover:bg-brand-gold/50"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setActiveSlide(i);
+                    }}
+                    className={`h-1 rounded-full transition-all duration-300 cursor-pointer ${
+                      activeSlide === i ? "w-5 bg-brand-gold" : "w-1 bg-brand-outline/50 hover:bg-brand-gold/40"
                     }`}
                     aria-label={`Slide ${i + 1}`}
                   />
@@ -308,13 +406,17 @@ export default function Hero({ onOpenRegister }: HeroProps) {
               </div>
 
               <button
-                onClick={() => setActiveSlide((prev) => (prev + 1) % CAROUSEL_SLIDES.length)}
-                className="w-8 h-8 rounded-full border border-brand-outline/20 bg-brand-surface/40 hover:bg-brand-gold/15 hover:border-brand-gold/40 text-brand-gold transition-all flex items-center justify-center text-xs font-bold cursor-pointer"
-                aria-label="Next miss"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setActiveSlide((prev) => (prev + 1) % CAROUSEL_SLIDES.length);
+                }}
+                className="w-7 h-7 rounded-full border border-brand-outline/25 bg-[#0e0d14]/80 hover:bg-brand-gold/20 hover:border-brand-gold/50 text-brand-gold transition-all flex items-center justify-center text-sm font-bold cursor-pointer"
+                aria-label="Next slide"
               >
                 ›
               </button>
             </div>
+
           </div>
         </div>
       </div>

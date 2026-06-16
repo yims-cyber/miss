@@ -7,8 +7,8 @@ const getLinkIcon = (label: string) => {
   switch (label.toLowerCase()) {
     case "accueil":
       return <Home className="w-3.5 h-3.5 shrink-0" />;
-    case "à propos":
-      return <Info className="w-3.5 h-3.5 shrink-0" />;
+    case "concours":
+      return <Award className="w-3.5 h-3.5 shrink-0" />;
     case "casting":
       return <UserCheck className="w-3.5 h-3.5 shrink-0" />;
     case "candidates":
@@ -35,8 +35,29 @@ export default function Header({ onOpenRegister }: HeaderProps) {
   const [activeHash, setActiveHash] = useState("#accueil");
 
   useEffect(() => {
+    const handleLocationChange = () => {
+      if (window.location.hash) {
+        setActiveHash(window.location.hash);
+      }
+    };
+    window.addEventListener("hashchange", handleLocationChange);
+    handleLocationChange();
+    return () => window.removeEventListener("hashchange", handleLocationChange);
+  }, []);
+
+  useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
+
+      // Guard active navigation highlighting when on the dedicated Candidates Page
+      if (window.location.hash === "#candidates") {
+        setActiveHash("#candidates");
+        return;
+      }
+      if (window.location.hash === "#concours") {
+        setActiveHash("#concours");
+        return;
+      }
 
       // Simple active link detection based on section visibility
       const sections = NAVIGATION_LINKS.map(link => 
@@ -47,9 +68,12 @@ export default function Header({ onOpenRegister }: HeaderProps) {
 
       for (let i = sections.length - 1; i >= 0; i--) {
         const section = sections[i];
-        if (section && section.offsetTop <= scrollPosition) {
-          setActiveHash(NAVIGATION_LINKS[i].href);
-          break;
+        if (section) {
+          const sectionTop = section.getBoundingClientRect().top + window.scrollY;
+          if (sectionTop <= scrollPosition) {
+            setActiveHash(NAVIGATION_LINKS[i].href);
+            break;
+          }
         }
       }
     };
@@ -61,10 +85,8 @@ export default function Header({ onOpenRegister }: HeaderProps) {
   const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault();
     setMobileMenuOpen(false);
-    const target = document.getElementById(href.replace("#", ""));
-    if (target) {
-      target.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
+    window.location.hash = href;
+    setActiveHash(href);
   };
 
   return (
@@ -74,10 +96,10 @@ export default function Header({ onOpenRegister }: HeaderProps) {
         initial={{ y: -50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
-        className={`fixed top-2 sm:top-3 md:top-4 left-4 right-4 z-50 mx-auto max-w-7xl transition-all duration-300 ${
+        className={`fixed top-0 left-0 right-0 w-full z-50 transition-all duration-300 rounded-tl-2xl rounded-tr-2xl rounded-b-none ${
           isScrolled 
-            ? "bg-brand-bg/80 backdrop-blur-md border border-brand-outline/20 shadow-lg rounded-2xl py-1.5 px-6" 
-            : "bg-brand-surface/35 backdrop-blur-sm border border-brand-outline/10 rounded-2xl py-2 sm:py-2.5 px-6"
+            ? "bg-brand-bg border-b border-brand-outline/25 shadow-lg py-2 px-6 sm:px-8" 
+            : "bg-brand-bg border-b border-brand-outline/15 py-3 px-6 sm:px-8"
         }`}
       >
         <div className="flex items-center justify-between">
@@ -95,77 +117,42 @@ export default function Header({ onOpenRegister }: HeaderProps) {
             />
           </a>
 
-          {/* Desktop Navigation Links */}
-          <nav className="hidden lg:flex items-center gap-1">
-            {NAVIGATION_LINKS.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                onClick={(e) => handleLinkClick(e, link.href)}
-                className={`px-3 py-1.5 text-xs font-semibold tracking-wider transition-all duration-300 rounded-md relative flex items-center gap-1.5 ${
-                  activeHash === link.href
-                    ? "text-brand-gold font-bold"
-                    : "text-brand-outline hover:text-brand-ivory"
-                }`}
-              >
-                {getLinkIcon(link.label)}
-                <span>{link.label}</span>
-                {activeHash === link.href && (
-                  <motion.span
-                    layoutId="activeIndicator"
-                    className="absolute bottom-0 left-2 right-2 h-[2px] bg-brand-gold rounded-full"
-                    transition={{ type: "spring", stiffness: 200, damping: 20 }}
-                  />
-                )}
-              </a>
-            ))}
-          </nav>
-
-          {/* CTA Inscription */}
-          <div className="hidden lg:block">
+          {/* Unified Premium Menu Trigger (Mobile & Desktop) at the right-hand side */}
+          <div className="flex items-center">
             <button
-              id="cta-nav-register"
-              onClick={onOpenRegister}
-              className="gold-gradient-bg px-5 py-2 text-xs font-bold text-black rounded-lg hover:shadow-[0_0_15px_rgba(242,195,91,0.4)] transition-all cursor-pointer inline-flex items-center gap-1.5"
+              id="mobile-menu-toggle"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="h-10 px-4 text-brand-outline hover:text-brand-ivory transition-all duration-300 flex items-center gap-2 cursor-pointer border border-brand-gold hover:border-brand-gold/30 hover:bg-brand-surface/45 rounded-none text-xs font-semibold tracking-wider font-mono uppercase"
+              aria-label="Toggle menu"
             >
-              <Award className="w-3.5 h-3.5" />
-              Inscription
+              {mobileMenuOpen ? <X className="w-4 h-4 text-brand-gold" /> : <Menu className="w-4 h-4 text-brand-gold" />}
+              <span>Menu</span>
             </button>
           </div>
-
-          {/* Mobile Menu Button */}
-          <button
-            id="mobile-menu-toggle"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden p-1.5 text-brand-outline hover:text-brand-ivory transition-colors"
-            aria-label="Toggle menu"
-          >
-            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
         </div>
       </motion.header>
 
-      {/* Mobile Menu Overlay */}
+      {/* Unified Menu Overlay Dropdown */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
             id="mobile-menu-dropdown"
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.25 }}
-            className="fixed top-[66px] sm:top-[78px] md:top-[86px] left-4 right-4 z-40 lg:hidden bg-brand-surface/95 backdrop-blur-xl border border-brand-outline/20 rounded-2xl p-6 shadow-2xl flex flex-col gap-5 items-stretch"
+            initial={{ opacity: 0, y: -15, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -15, scale: 0.98 }}
+            transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+            className="fixed top-[60px] sm:top-[76px] md:top-[88px] left-0 right-0 z-40 w-full bg-brand-bg border-b border-brand-outline/25 rounded-t-none rounded-b-2xl p-5 sm:p-7 shadow-[0_30px_70px_rgba(0,0,0,0.85)] flex flex-col md:grid md:grid-cols-12 gap-6 items-stretch"
           >
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-2 md:col-span-8 grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1.5">
               {NAVIGATION_LINKS.map((link) => (
                 <a
                   key={link.href}
                   href={link.href}
                   onClick={(e) => handleLinkClick(e, link.href)}
-                  className={`text-sm py-2 px-3 rounded-lg font-medium transition-colors flex items-center gap-2.5 ${
+                  className={`text-xs sm:text-sm py-2.5 px-3.5 rounded-xl font-medium transition-all duration-300 flex items-center gap-3 border ${
                     activeHash === link.href
-                      ? "bg-brand-gold/10 text-brand-gold font-bold"
-                      : "text-brand-outline hover:text-brand-ivory hover:bg-brand-charcoal/30"
+                      ? "bg-brand-gold/10 text-brand-gold font-bold border-brand-gold/30 shadow-[0_4px_20px_rgba(242,195,91,0.1)]"
+                      : "text-brand-outline hover:text-brand-ivory hover:bg-brand-charcoal/30 border-transparent"
                   }`}
                 >
                   {getLinkIcon(link.label)}
@@ -174,17 +161,25 @@ export default function Header({ onOpenRegister }: HeaderProps) {
               ))}
             </div>
 
-            <button
-              id="cta-mobile-register"
-              onClick={() => {
-                setMobileMenuOpen(false);
-                onOpenRegister();
-              }}
-              className="gold-gradient-bg w-full py-3 text-xs font-bold text-black rounded-xl hover:shadow-[0_0_15px_rgba(242,195,91,0.3)] transition-all cursor-pointer inline-flex items-center justify-center gap-1.5"
-            >
-              <Award className="w-4 h-4" />
-              S'inscrire au Concours
-            </button>
+            <div className="flex flex-col justify-center gap-3 md:col-span-4 border-t md:border-t-0 md:border-l border-brand-outline/10 pt-4 md:pt-0 md:pl-6 text-left">
+              <span className="text-[10px] tracking-[0.25em] font-mono text-brand-gold font-semibold uppercase flex items-center gap-1.5">
+                <Crown className="w-3.5 h-3.5" /> Nationale DRC
+              </span>
+              <p className="text-[11px] text-brand-outline leading-relaxed">
+                Suivez la sélection nationale, soutenez vos candidates favorites et participez activement à l'élection de l'ambassadrice suprême de la beauté congolaise.
+              </p>
+              <button
+                id="cta-mobile-register"
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  onOpenRegister();
+                }}
+                className="gold-gradient-bg w-full py-2.5 text-xs font-bold text-black rounded-lg hover:shadow-[0_0_15px_rgba(242,195,91,0.3)] transition-all cursor-pointer inline-flex items-center justify-center gap-1.5 mt-1"
+              >
+                <Award className="w-4 h-4" />
+                S'inscrire au Concours
+              </button>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

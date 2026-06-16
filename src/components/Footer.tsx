@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Crown, Mail, Phone, MapPin, Facebook, Instagram, Twitter, Linkedin, Send, Sparkles } from "lucide-react";
+import { Crown, Mail, Phone, MapPin, Facebook, Instagram, Twitter, Linkedin, Send, Sparkles, Heart, ArrowRight } from "lucide-react";
 import { NAVIGATION_LINKS, PARTNERS_LIST } from "../data";
 
 export default function Footer() {
@@ -22,7 +22,13 @@ export default function Footer() {
 
   const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault();
-    const target = document.getElementById(href.replace("#", ""));
+    window.location.hash = href;
+  };
+
+  const handleVoteClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    window.location.hash = "#candidates";
+    const target = document.getElementById("candidates");
     if (target) {
       target.scrollIntoView({ behavior: "smooth", block: "start" });
     }
@@ -67,47 +73,57 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* Main Big Call to Action bottom element */}
-      <div className="py-20 relative px-4 text-center border-b border-brand-charcoal/30 bg-gradient-to-t from-brand-surface/20 to-transparent">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60vw] h-[60vw] max-w-[600px] bg-brand-gold/2 rounded-full blur-[100px] pointer-events-none" />
-        
-        <div className="relative z-10 max-w-2xl mx-auto">
-          <h2 className="font-display text-2xl sm:text-3xl md:text-4xl text-brand-ivory leading-tight font-medium mb-8">
-            Vous avez le profil ? Devenez <br />
-            <span className="text-transparent bg-clip-text gold-text-gradient font-black">
-              MISS NATIONALE DRC 2026
-            </span>
+      {/* Main Big Call to Action bottom element - Styled per the requested photo */}
+      <div 
+        className="py-24 relative px-4 text-center bg-[#FAF8F5] border-t border-b border-[#EEEAE0]"
+        style={{
+          backgroundSize: '24px 24px',
+          backgroundImage: 'linear-gradient(to right, rgba(212, 168, 67, 0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(212, 168, 67, 0.05) 1px, transparent 1px)'
+        }}
+      >
+        <div className="relative z-10 max-w-3xl mx-auto">
+          {/* Subtitle / Edition Badge */}
+          <div className="flex items-center justify-center gap-3 text-brand-gold-dark text-[10px] sm:text-xs font-sans uppercase tracking-[0.35em] font-bold mb-5">
+            <span className="h-[1px] w-6 sm:w-10 bg-brand-gold-dark/40" />
+            <span>Vote Public Ouvert</span>
+            <span className="h-[1px] w-6 sm:w-10 bg-brand-gold-dark/40" />
+          </div>
+
+          {/* Majestic title with custom underline decor */}
+          <h2 className="font-display text-4xl sm:text-5xl md:text-6xl text-neutral-900 leading-tight font-light mb-2">
+            Votez pour votre <span className="italic text-brand-gold-dark font-normal">Favorite</span>
           </h2>
           
-          <div className="flex flex-wrap justify-center gap-4">
-            <a
-              href="#navbar-main"
-              onClick={(e) => {
-                e.preventDefault();
-                // Find and click the register trigger element
-                const btn = document.getElementById("cta-nav-register");
-                if (btn) btn.click();
-              }}
-              className="gold-gradient-bg px-8 py-3.5 text-xs font-extrabold text-black uppercase tracking-wider rounded-xl hover:shadow-[0_0_20px_rgba(242,195,91,0.4)] transition-all cursor-pointer"
+          <div className="w-12 h-[2px] bg-brand-gold-dark/50 mx-auto mb-6" />
+
+          {/* Core Vote description */}
+          <p className="font-sans text-neutral-600 text-xs sm:text-sm md:text-base font-light leading-relaxed max-w-2xl mx-auto mb-8">
+            Soutenez la candidate qui vous inspire le plus et contribuez à élire la prochaine Miss Nationale DRC 2026 — ambassadrice officielle des causes sociales de la République Démocratique du Congo.
+          </p>
+
+          <div className="flex justify-center mb-6">
+            <button
+              onClick={handleVoteClick}
+              className="px-8 py-4 sm:px-10 sm:py-4.5 rounded-xl bg-gradient-to-b from-brand-gold via-[#e5b54c] to-brand-gold-dark text-black font-sans font-extrabold text-[11px] sm:text-xs uppercase tracking-[0.18em] hover:brightness-105 shadow-[0_6px_20px_rgba(212,168,67,0.35)] hover:shadow-[0_8px_30px_rgba(212,168,67,0.45)] transition-all cursor-pointer flex items-center justify-center gap-2.5"
             >
-              Postuler maintenant
-            </a>
-            <a
-              href="#casting"
-              onClick={(e) => handleLinkClick(e, "#casting")}
-              className="px-8 py-3.5 text-xs font-extrabold text-brand-gold tracking-wider rounded-xl border border-brand-outline/25 bg-brand-surface/40 hover:bg-brand-gold/15 hover:border-brand-gold/50 transition-all cursor-pointer"
-            >
-              Voir les critères
-            </a>
+              <Heart className="w-4 h-4 text-black stroke-[2]" />
+              <span>Voter maintenant</span>
+              <ArrowRight className="w-4 h-4 text-black stroke-[2]" />
+            </button>
           </div>
+
+          {/* Fine descriptive regulatory text */}
+          <p className="font-sans text-neutral-400 text-[10px] sm:text-xs max-w-2xl mx-auto leading-relaxed">
+            1 vote par personne · Sécurisé · Toute tentative de manipulation entraîne une disqualification définitive (Art. 9 du Règlement)
+          </p>
         </div>
       </div>
 
       {/* Footer Content Columns */}
-      <div className="max-w-7xl mx-auto px-6 py-16 grid grid-cols-1 md:grid-cols-12 gap-10">
+      <div className="max-w-7xl mx-auto px-6 py-16 grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-y-12 md:gap-x-10">
         
-        {/* Logo and Branding summary Column (4/12 width) */}
-        <div className="md:col-span-4 flex flex-col items-start text-left gap-4">
+        {/* Logo and Branding summary Column */}
+        <div className="md:col-span-6 lg:col-span-4 flex flex-col items-start text-left gap-4">
           <div className="flex items-center">
             <img 
               src="https://missnationalerdc.approtech.org/admin/logo.png" 
@@ -144,8 +160,8 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Links Navigation Column (3/12 width) */}
-        <div className="md:col-span-3 flex flex-col items-start text-left gap-4">
+        {/* Links Navigation Column */}
+        <div className="md:col-span-6 lg:col-span-3 flex flex-col items-start text-left gap-4">
           <h4 className="font-display font-bold text-xs tracking-widest text-brand-gold uppercase">
             NAVIGATION
           </h4>
@@ -164,8 +180,8 @@ export default function Footer() {
           </ul>
         </div>
 
-        {/* Contact info Column (2/12 width) */}
-        <div className="md:col-span-2 flex flex-col items-start text-left gap-4">
+        {/* Contact info Column */}
+        <div className="md:col-span-6 lg:col-span-2 flex flex-col items-start text-left gap-4">
           <h4 className="font-display font-bold text-xs tracking-widest text-brand-gold uppercase">
             CONTACT
           </h4>
@@ -185,8 +201,8 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Newsletter subscription form Column (3/12 width) */}
-        <div className="md:col-span-3 flex flex-col items-start text-left gap-4">
+        {/* Newsletter subscription form Column */}
+        <div className="md:col-span-6 lg:col-span-3 flex flex-col items-start text-left gap-4">
           <h4 className="font-display font-bold text-xs tracking-widest text-brand-gold uppercase">
             NEWSLETTER
           </h4>
